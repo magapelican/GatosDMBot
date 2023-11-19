@@ -2,10 +2,10 @@ from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
 
-def get_post_or_not_kb() -> InlineKeyboardMarkup:
+def get_post_or_not_kb(msg_id, sender_id) -> InlineKeyboardMarkup:
     builder = InlineKeyboardBuilder()
     builder.add(
-        InlineKeyboardButton(text="✅", callback_data="post_img"),
-        InlineKeyboardButton(text="❌", callback_data="do_not_post_img")
+        InlineKeyboardButton(text="✅", callback_data=f"post_img_{msg_id}"),
+        InlineKeyboardButton(text="❌", callback_data=f"do_not_post_img_{sender_id}")
     )
     return builder.as_markup()
