@@ -1,17 +1,38 @@
-import requests
-import os
-import io
-#from PIL import Image # пока не скачал библиотеку
-
-from config import URI_INFO, URI
-
-from aiogram import types, F, Router
-from aiogram.types import Message
+from aiogram import Router, F, Bot
+from aiogram.types import Message, CallbackQuery
 from aiogram.filters import Command
+
+import config
+from filters import IsAdminFilter
+from keyboards import get_post_or_not_kb
 
 router = Router()
 
-#CommandHandler
+
 @router.message(Command("start"))
 async def cmd_start(message: Message):
     await message.answer("Salam, vac!")
+
+
+@router.message(F.photo, ~IsAdminFilter())
+async def send_on_message(message: Message, bot: Bot):
+    photo_id = message.photo[-1].file_id  # message.photo[-1] to get pic of biggest size
+    user_name = message.from_user.first_name
+    for admin_id in config.ADMIN_IDS:
+        await bot.send_photo(
+            chat_id=admin_id, photo=photo_id,
+            reply_markup=get_post_or_not_kb()
+        )
+        await bot.send_message(admin_id, "Sent by " + user_name)
+
+
+@router.callback_query(F.data == "post_img")
+async def post_img_to_channel(callback: CallbackQuery):
+    await callback.message.answer("i work")
+    await callback.answer()
+
+
+@router.callback_query(F.data == "do_not_post_img")
+async def dont_post_img_to_channel(callback: CallbackQuery):
+    await callback.message.answer("i work too")
+    await callback.answer()

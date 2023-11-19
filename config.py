@@ -1,11 +1,8 @@
-TOKEN = None
-ADMIN_ID = None
+from os import getenv
 
-with open("token.txt") as f:
-    TOKEN = f.read()
+from dotenv import load_dotenv
 
-with open("admin_id.txt") as f:
-    ADMIN_ID = f.read()
+load_dotenv()
 
-URI_INFO = f"https://api.telegram.org/bot{TOKEN}/getFile?file_id="
-URI = f"https://api.telegram.org/file/bot{TOKEN}/"
+TOKEN = getenv("TOKEN")
+ADMIN_IDS = getenv("ADMIN_IDS").split(":")
