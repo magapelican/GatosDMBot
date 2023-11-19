@@ -15,7 +15,7 @@ async def cmd_start(message: Message):
     await message.answer("Salam, vac!")
 
 
-@router.message(F.photo, IsAdminFilter())
+@router.message(F.photo, ~IsAdminFilter())
 async def send_on_message(message: Message, bot: Bot):
     photo_id = message.photo[-1].file_id  # message.photo[-1] to get pic of biggest size
     user_name = message.from_user.first_name
