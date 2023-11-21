@@ -31,14 +31,14 @@ async def send_on_message(message: Message, bot: Bot):
         )
 
     params = (message.message_id, photo_id)
-    database.insert_data(params)
+    database.user_data_table.insert_data(params)
 
 
 @router.callback_query(F.data.startswith("post_img"))
 async def post_img_to_channel(callback: CallbackQuery, bot: Bot):
     msg_id = callback.data.split("_")[-1]
-    await bot.send_photo(config.CHANNEL_ID, database.get_file_id(int(msg_id)))
-    database.delete_data_from_db(int(msg_id))
+    await bot.send_photo(config.CHANNEL_ID, database.user_data_table.get_file_id(int(msg_id)))
+    database.user_data_table.delete_data_from_db(int(msg_id))
     await callback.message.delete()
 
 
@@ -48,4 +48,4 @@ async def dont_post_img_to_channel(callback: CallbackQuery, bot: Bot):
     sender_id = callback.data.split("_")[-2]
     await bot.send_message(sender_id, "Админу не понравилась твоя публикация((")
     await callback.message.delete()
-    database.delete_data_from_db(int(msg_id))
+    database.user_data_table.delete_data_from_db(int(msg_id))
