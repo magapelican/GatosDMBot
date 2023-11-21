@@ -18,13 +18,16 @@ async def cmd_start(message: Message):
 @router.message(F.photo, ~IsAdminFilter())
 async def send_on_message(message: Message, bot: Bot):
     photo_id = message.photo[-1].file_id  # message.photo[-1] to get pic of biggest size
-    user_name = message.from_user.first_name
+    first_name = message.from_user.first_name
+    url = "https://telegram.me/" + message.from_user.username
+    caption = f"Send by [{first_name}]({url})"
 
     for admin_id in config.ADMIN_IDS:
         await bot.send_photo(
             chat_id=admin_id, photo=photo_id,
             reply_markup=get_post_or_not_kb(message.message_id, message.from_user.id),
-            caption="Sent by " + user_name
+            caption=caption,
+            parse_mode="markdown"
         )
 
     params = (message.message_id, photo_id)
@@ -44,5 +47,5 @@ async def dont_post_img_to_channel(callback: CallbackQuery, bot: Bot):
     msg_id = callback.data.split("_")[-1]
     sender_id = callback.data.split("_")[-2]
     await bot.send_message(sender_id, "Админу не понравилась твоя публикация((")
-    await callback.message.delete_reply_markup()
+    await callback.message.delete()
     database.delete_data_from_db(int(msg_id))
