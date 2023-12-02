@@ -38,7 +38,7 @@ async def post_img_to_channel(callback: CallbackQuery, bot: Bot):
     msg_id = callback.data.split("_")[-1]
     await bot.send_photo(config.CHANNEL_ID, database.get_file_id(int(msg_id)))
     database.delete_user_data(int(msg_id))
-    await callback.message.delete()
+    await callback.message.delete_reply_markup()
 
 
 @router.callback_query(F.data.startswith("do_not_post_img"))
@@ -46,5 +46,5 @@ async def dont_post_img_to_channel(callback: CallbackQuery, bot: Bot):
     msg_id = callback.data.split("_")[-1]
     sender_id = callback.data.split("_")[-2]
     await bot.send_message(sender_id, "Админу не понравилась твоя публикация((")
-    await callback.message.delete()
+    await callback.message.delete_reply_markup()
     database.delete_user_data(int(msg_id))
